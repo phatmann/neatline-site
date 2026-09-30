@@ -3,35 +3,225 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neatline</title>
+<title>Neatline — Offline GPS on your GeoPDFs</title>
+<meta name="description" content="Neatline turns the georeferenced PDF maps you already use — CalTopo, USGS, Forest Service, any GeoPDF — into a live, fully offline GPS map. See where you are on your own maps, even with no signal.">
+<meta property="og:title" content="Neatline — Offline GPS on your GeoPDFs">
+<meta property="og:description" content="Turn your CalTopo, USGS & Forest Service GeoPDFs into a live, offline GPS map. Your location, your maps, no signal needed.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1f7a4b">
 <style>
-  :root { color-scheme: light dark; --fg:#1a1a1a; --muted:#5a5a5a; --bg:#ffffff; --accent:#1c6dd0; --rule:#e6e6e6; }
-  @media (prefers-color-scheme: dark) { :root { --fg:#ececec; --muted:#a6a6a6; --bg:#151515; --accent:#5ea2ff; --rule:#2c2c2c; } }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg);
-    font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
-  .wrap { max-width:680px; margin:0 auto; padding:72px 20px 80px; }
-  h1 { font-size:2.4rem; margin:0 0 .15em; letter-spacing:-.02em; }
-  .tag { font-size:1.2rem; color:var(--muted); margin:0 0 2em; }
-  p { max-width:60ch; }
-  a { color:var(--accent); }
-  .links { margin-top:2.5em; display:flex; gap:1.5em; flex-wrap:wrap; }
-  .links a { text-decoration:none; font-weight:600; }
-  hr { border:0; border-top:1px solid var(--rule); margin:3em 0 1.5em; }
-  footer { color:var(--muted); font-size:.9rem; }
+  :root{
+    color-scheme: light dark;
+    --bg:#ffffff; --bg-alt:#f4f6f4; --card:#ffffff;
+    --ink:#15211b; --muted:#5c6b63; --rule:#e5eae6;
+    --accent:#1f7a4b; --accent-ink:#ffffff; --accent-soft:#e8f3ec;
+    --shadow:0 18px 50px -18px rgba(20,50,35,.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1512; --bg-alt:#141b17; --card:#18201b;
+      --ink:#e9efea; --muted:#9db0a5; --rule:#273029;
+      --accent:#57b483; --accent-ink:#0b130e; --accent-soft:#17251c;
+      --shadow:0 18px 50px -18px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1512; --bg-alt:#141b17; --card:#18201b;
+    --ink:#e9efea; --muted:#9db0a5; --rule:#273029;
+    --accent:#57b483; --accent-ink:#0b130e; --accent-soft:#17251c;
+    --shadow:0 18px 50px -18px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--accent);text-decoration:none}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.1;margin:0}
+  img{max-width:100%;height:auto;display:block}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--rule)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;color:var(--ink);letter-spacing:-.02em}
+  .brand .pin{width:22px;height:22px;flex:0 0 auto}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{color:var(--muted);font-size:.95rem;font-weight:600}
+  .nav-links a:hover{color:var(--ink)}
+  @media(max-width:620px){.nav-links a.hide-sm{display:none}}
+
+  /* Hero */
+  .hero{padding:72px 0 48px;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .eyebrow{display:inline-block;font-size:.82rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:18px}
+  .hero h1{font-size:clamp(2.1rem,5.2vw,3.4rem);font-weight:850}
+  .hero p.lead{font-size:1.2rem;color:var(--muted);margin:18px 0 28px;max-width:34ch}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:var(--accent-ink);
+    font-weight:700;padding:13px 22px;border-radius:12px;font-size:1rem;box-shadow:var(--shadow)}
+  .btn.secondary{background:transparent;color:var(--ink);box-shadow:none;border:1px solid var(--rule)}
+  .btn:hover{filter:brightness(1.05)}
+  .note{font-size:.9rem;color:var(--muted);margin-top:14px}
+  .phone{justify-self:center;width:min(360px,86vw);border-radius:40px;box-shadow:var(--shadow);
+    border:1px solid var(--rule);overflow:hidden;background:var(--card)}
+
+  /* Value strip */
+  .strip{background:var(--bg-alt);border-block:1px solid var(--rule)}
+  .strip .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;padding:26px 20px}
+  .stat{flex:1 1 200px}
+  .stat b{display:block;font-size:1.05rem}
+  .stat span{color:var(--muted);font-size:.95rem}
+
+  /* Features */
+  .features{padding:72px 0 24px}
+  .section-head{text-align:center;max-width:36ch;margin:0 auto 8px}
+  .section-head h2{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:820}
+  .section-head p{color:var(--muted);margin:14px auto 0}
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:56px 0;border-bottom:1px solid var(--rule)}
+  .feat:nth-child(even) .feat-media{order:2}
+  .feat-media{display:flex;justify-content:center}
+  .feat-media .shot{width:min(360px,84vw);border-radius:34px;box-shadow:var(--shadow);border:1px solid var(--rule);overflow:hidden}
+  .feat h3{font-size:1.5rem;font-weight:780;margin-bottom:12px}
+  .feat p{color:var(--muted);margin:0}
+  .feat .kicker{color:var(--accent);font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+
+  /* Closing CTA */
+  .closing{padding:84px 0;text-align:center}
+  .closing h2{font-size:clamp(1.8rem,4.4vw,2.5rem);font-weight:840;max-width:20ch;margin:0 auto 10px}
+  .closing p{color:var(--muted);max-width:40ch;margin:0 auto 28px}
+
+  footer{border-top:1px solid var(--rule);background:var(--bg-alt)}
+  footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:30px 20px}
+  footer .f-links{display:flex;gap:22px;flex-wrap:wrap}
+  footer a{color:var(--muted);font-weight:600;font-size:.95rem}
+  footer a:hover{color:var(--ink)}
+  footer .copy{color:var(--muted);font-size:.9rem}
+
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr;padding:44px 0 24px;gap:30px;text-align:center}
+    .hero p.lead{margin-inline:auto}
+    .cta-row{justify-content:center}
+    .feat{grid-template-columns:1fr;gap:26px;padding:44px 0;text-align:center}
+    .feat:nth-child(even) .feat-media{order:0}
+    .feat-media{order:0}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Neatline</h1>
-  <p class="tag">Offline GPS on your GeoPDFs.</p>
-  <p>Neatline turns the georeferenced PDF maps you already use — CalTopo, USGS, Forest Service, any GeoPDF — into a live, fully‑offline GPS map in your pocket. See exactly where you are on your own maps, even with no cell signal. Drop waypoints, record tracks, measure, and export — no account, no subscription.</p>
-  <div class="links">
-    <a href="support.html">Support</a>
-    <a href="privacy.html">Privacy Policy</a>
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <svg class="pin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+      Neatline
+    </div>
+    <nav class="nav-links">
+      <a href="#features" class="hide-sm">Features</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html" class="hide-sm">Privacy</a>
+    </nav>
   </div>
-  <hr>
-  <footer>© 2026 Neatline.</footer>
+</header>
+
+<section class="wrap hero">
+  <div>
+    <span class="eyebrow">Offline field maps</span>
+    <h1>Offline GPS on your GeoPDFs.</h1>
+    <p class="lead">Turn the georeferenced maps you already use — CalTopo, USGS, Forest Service, any GeoPDF — into a live GPS map in your pocket. See exactly where you are, even with no signal.</p>
+    <div class="cta-row">
+      <span class="btn" aria-disabled="true">Coming soon to the App Store</span>
+      <a class="btn secondary" href="#features">See how it works</a>
+    </div>
+    <p class="note">No account. No subscription. Your maps and data stay on your device.</p>
+  </div>
+  <div class="phone"><img src="shots/1.jpg" width="1000" height="1394" alt="Neatline showing your live location on a USGS topo map of Fox Island, WA"></div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <div class="stat"><b>Works with no signal</b><span>Maps &amp; GPS run fully offline.</span></div>
+    <div class="stat"><b>Your own maps</b><span>Any georeferenced PDF — CalTopo, USGS, USFS.</span></div>
+    <div class="stat"><b>Nothing leaves your phone</b><span>No account, no tracking, no cloud.</span></div>
+  </div>
 </div>
+
+<section class="features" id="features">
+  <div class="section-head">
+    <h2>Everything you need in the field.</h2>
+    <p>Built for hiking, hunting, and the backcountry — where the map matters and the signal doesn't reach.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="feat">
+      <div class="feat-media"><div class="shot"><img src="shots/1.jpg" width="1000" height="1394" alt="Blue location dot with heading arrow on a topo map"></div></div>
+      <div>
+        <div class="kicker">You are here</div>
+        <h3>See yourself on your own maps</h3>
+        <p>A blue dot with a heading arrow shows where you are and which way you're facing — plotted right on the georeferenced PDF you brought. Recenter with a tap and read your exact coordinates any time.</p>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-media"><div class="shot"><img src="shots/2.jpg" width="1000" height="1780" alt="A GeoPDF sheet floating over a dim real-world street map"></div></div>
+      <div>
+        <div class="kicker">Stay oriented</div>
+        <h3>Your sheet, in the real world</h3>
+        <p>A dim live street map sits behind your map sheet so you always know where it fits in the wider world — then disappears when you don't need it. Everything you've loaded works with no connection.</p>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-media"><div class="shot"><img src="shots/3.jpg" width="1000" height="917" alt="Map My Location options: Topographic, Satellite, Street"></div></div>
+      <div>
+        <div class="kicker">Make a map anywhere</div>
+        <h3>No map yet? Build one on the spot</h3>
+        <p>Map My Location stitches a fresh map of exactly where you're standing in seconds — topographic, satellite, or worldwide street — and saves it on your device to use offline.</p>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-media"><div class="shot"><img src="shots/4.jpg" width="1000" height="1894" alt="New waypoint editor with flag color, coordinates, notes and photos"></div></div>
+      <div>
+        <div class="kicker">Mark it up</div>
+        <h3>Waypoints, tracks &amp; measurements</h3>
+        <p>Drop colored flag waypoints with names, notes, and photos. Record a track that keeps logging with your phone locked. Measure distance and area, and share or export everything as KML/KMZ.</p>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-media"><div class="shot"><img src="shots/5.jpg" width="1000" height="962" alt="Map list showing a You're here coverage badge"></div></div>
+      <div>
+        <div class="kicker">Your map library</div>
+        <h3>Carry every map, find the right one</h3>
+        <p>Keep all your maps in one place — even huge 100&nbsp;MB+ sheets. A "You're here" badge flags exactly which maps cover where you're standing, so you open the right one fast.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap">
+    <h2>Your maps. Your location. No signal required.</h2>
+    <p>Neatline is a one-time download with no account and no subscription.</p>
+    <span class="btn" aria-disabled="true">Coming soon to the App Store</span>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">
+      <svg class="pin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+      Neatline
+    </div>
+    <div class="f-links">
+      <a href="#features">Features</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="mailto:support@neatline.app">support@neatline.app</a>
+    </div>
+    <div class="copy">© 2026 Neatline</div>
+  </div>
+</footer>
 </body>
 </html>
