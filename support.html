@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neatline — Support</title>
+<style>
+  :root { color-scheme: light dark; --fg:#1a1a1a; --muted:#5a5a5a; --bg:#ffffff; --accent:#1c6dd0; --rule:#e6e6e6; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#ececec; --muted:#a6a6a6; --bg:#151515; --accent:#5ea2ff; --rule:#2c2c2c; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-text-size-adjust:100%; }
+  .wrap { max-width:680px; margin:0 auto; padding:48px 20px 80px; }
+  h1 { font-size:1.9rem; line-height:1.2; margin:0 0 .25em; letter-spacing:-.01em; }
+  h2 { font-size:1.1rem; margin:1.8em 0 .35em; }
+  .sub { color:var(--muted); margin:0 0 2em; }
+  p, li { color:var(--fg); }
+  ul { padding-left:1.25em; }
+  li { margin:.35em 0; }
+  a { color:var(--accent); }
+  .lead { font-size:1.15rem; }
+  .card { border:1px solid var(--rule); border-radius:12px; padding:18px 20px; margin:1.5em 0; }
+  hr { border:0; border-top:1px solid var(--rule); margin:2.5em 0; }
+  footer { color:var(--muted); font-size:.9rem; }
+  .nav { margin-bottom:2em; font-size:.95rem; }
+  .nav a { color:var(--muted); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="nav"><a href="index.html">← Neatline</a></div>
+  <h1>Neatline Support</h1>
+  <p class="sub">Help for Neatline — offline GPS on your georeferenced PDF maps.</p>
+
+  <div class="card">
+    <p class="lead" style="margin:0">Need a hand or have feedback?</p>
+    <p style="margin:.4em 0 0">Email <a href="mailto:support@neatline.app">support@neatline.app</a> and I’ll get back to you. Please include your iPhone model and iOS version, and a screenshot if something looks wrong.</p>
+  </div>
+
+  <h2>Getting started</h2>
+  <ul>
+    <li><strong>Open a map you already have.</strong> In Files or Mail, tap a GeoPDF (CalTopo, USGS, Forest Service, any georeferenced PDF), choose Share → <em>Open in Neatline</em>.</li>
+    <li><strong>See yourself on the map.</strong> Allow location when asked; a blue dot with a heading arrow shows where you are and which way you’re facing.</li>
+    <li><strong>No map yet?</strong> Use <em>Map My Location</em> to build one of where you’re standing — topo, satellite (US), or worldwide street.</li>
+  </ul>
+
+  <h2>Frequently asked</h2>
+
+  <p><strong>Does Neatline work with no signal?</strong><br>
+  Yes. Your maps and data live on the device and the GPS works offline. Two optional features — the dim context map and Map My Location — need a connection only at the moment they fetch map tiles.</p>
+
+  <p><strong>Why does it ask for “Always” location?</strong><br>
+  Only so a track keeps recording while your phone is locked or in your pocket. If you don’t record tracks, “While Using” is fine. Location never leaves your device.</p>
+
+  <p><strong>My position looks offset or flipped.</strong><br>
+  Neatline reads the georeferencing embedded in the PDF. A handful of maps are exported with unusual referencing; if yours looks wrong, email me the map and I’ll take a look.</p>
+
+  <p><strong>How do I get my waypoints and tracks out?</strong><br>
+  Share or export them as KML/KMZ from the app — individual tracks can be exported on their own.</p>
+
+  <p><strong>Where are my maps stored?</strong><br>
+  On your iPhone, inside Neatline. There’s no account and no cloud copy, so keep the original PDFs if a map matters to you.</p>
+
+  <h2>Privacy</h2>
+  <p>Neatline has no account, no analytics, and collects no personal data. See the <a href="privacy.html">Privacy Policy</a>.</p>
+
+  <hr>
+  <footer>Neatline · a no‑account, offline GPS app for your georeferenced PDF maps.</footer>
+</div>
+</body>
+</html>
