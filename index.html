@@ -89,6 +89,8 @@
   .feat h3{font-size:1.5rem;font-weight:780;margin-bottom:12px}
   .feat p{color:var(--muted);margin:0}
   .feat .kicker{color:var(--accent);font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .feat.feat-text{grid-template-columns:1fr;text-align:center;justify-items:center}
+  .feat.feat-text p{max-width:58ch}
 
   /* Closing CTA */
   .closing{padding:84px 0;text-align:center}
@@ -164,8 +166,7 @@
       </div>
     </div>
 
-    <div class="feat">
-      <div class="feat-media"><div class="shot"><img src="shots/share.jpg" width="1000" height="1030" alt="Sharing a map titled Fox Island, WA.pdf from the iOS share sheet"></div></div>
+    <div class="feat feat-text">
       <div>
         <div class="kicker">Share offline</div>
         <h3>Hand off a map — no signal needed</h3>
